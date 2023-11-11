@@ -1,3 +1,10 @@
 {
-  "extends": "@tsconfig/react-native/tsconfig.json"
+  "compilerOptions": {
+    "jsx": "react",
+    "jsx": "react",
+  },
+  "extends": "@tsconfig/react-native/tsconfig.json",
+  
+    /* Completeness */
+    "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
 }
