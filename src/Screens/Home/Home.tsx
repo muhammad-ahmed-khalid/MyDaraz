@@ -10,29 +10,26 @@ import { clearAllData, getItem, setItem } from '../../services/storageService';
 import { useBoundStore } from '../../stores';
 import Card from '../../components/Card/Card';
 import { CARD_DUMMY_DATA } from '../../constants/DummyData';
+import { STORAGE_KEYS } from '../../constants/QureyKeys';
 
 const Home = () => {
-    const storedValue = getItem("cartItem");
-    const [myCount, setMyCount] = useState(storedValue);
+    const storedValue = getItem(STORAGE_KEYS.CART_ITEM);
+    const {
+        setAddToCartZustand,
+        addToCartZustand
+    } = useBoundStore();
+
     useEffect(() => {
         setAddToCartZustand(storedValue)
     }, [])
 
-    const {
-        setAddToCartZustand,
-        addToCartZustand
-    } = useBoundStore()
     const handlePressChange = (price) => {
-        console.log("Ahmed", addToCartZustand + price);
-        setItem("cartItem", addToCartZustand + price);
-        setMyCount(price);
+        setItem(STORAGE_KEYS.CART_ITEM, addToCartZustand + price);
         setAddToCartZustand(addToCartZustand + price)
     };
 
     const handlePressClear = () => {
-        console.log("Ahmed", null);
         clearAllData()
-        setMyCount(0);
         setAddToCartZustand(0)
     };
 
@@ -40,18 +37,14 @@ const Home = () => {
         handlePressChange(val?.productPrice)
     }
     const handlePressRemovedCart = (price) => {
-        console.log("Ahmed", addToCartZustand - price);
         if (addToCartZustand < price) {
-            setItem("cartItem", 0);
-            setMyCount(0);
+            setItem(STORAGE_KEYS.CART_ITEM, 0);
             setAddToCartZustand(0)
         }
         else {
-            setItem("cartItem", addToCartZustand - price);
-            setMyCount(price);
+            setItem(STORAGE_KEYS.CART_ITEM, addToCartZustand - price);
             setAddToCartZustand(addToCartZustand - price)
         }
-
     };
     const handlePressRemoveCart = (val) => {
         handlePressRemovedCart(val?.productPrice)
@@ -72,13 +65,6 @@ const Home = () => {
                 data={CARD_DUMMY_DATA}
                 renderItem={renderItem}
             />
-            {/* <Text>This is Ahmed{myCount}</Text>
-      <TouchableOpacity onPress={handlePressChange}>
-        <Text>Change</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handlePressClear}>
-        <Text>Clear</Text>
-      </TouchableOpacity> */}
         </View>
     )
 }
@@ -88,7 +74,5 @@ export default Home
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        // alignItems: 'center',
-        // justifyContent: 'center'
     }
 })
