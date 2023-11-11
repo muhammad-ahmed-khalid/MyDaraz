@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
+    FlatList,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -7,7 +8,8 @@ import {
   } from 'react-native';
 import { clearAllData, getItem, setItem } from '../../services/storageService';
 import { useBoundStore } from '../../stores';
-//   import { clearAllData, getItem, setItem } from './src/services/storageService';
+import Card from '../../components/Card/Card';
+import { CARD_DUMMY_DATA } from '../../constants/DummyData';
 
 const Home = () => {
     const storedValue = getItem("aojani");
@@ -16,37 +18,67 @@ const Home = () => {
         setAddToCartZustand(storedValue)
     },[])
 
-
     const {
         setAddToCartZustand,
         addToCartZustand
       } =useBoundStore()
-    const handlePressChange = () => {
-      const newRandomValue = Math.random() * 4;
-      console.log("Ahmed", newRandomValue);
-      setItem("aojani", newRandomValue);
-      setMyCount(newRandomValue);
-      setAddToCartZustand(newRandomValue)
+    const handlePressChange = (price) => {
+      console.log("Ahmed", addToCartZustand + price);
+      setItem("aojani", addToCartZustand + price);
+      setMyCount(price);
+      setAddToCartZustand(addToCartZustand + price)
     };
   
     const handlePressClear = () => {
-      const newRandomValue = 0;
-      console.log("Ahmed", newRandomValue);
+      console.log("Ahmed", null);
       clearAllData()
-      setMyCount(newRandomValue);
-      setAddToCartZustand(newRandomValue)
+      setMyCount(0);
+      setAddToCartZustand(0)
     };
+
+const handlePressCallBack = (val) => {
+    handlePressChange(val?.productPrice)
+}
+const handlePressRemovedCart = (price) => {
+    console.log("Ahmed", addToCartZustand - price);
+    if(addToCartZustand < price){
+        setItem("aojani", 0);
+        setMyCount(0);
+        setAddToCartZustand(0)
+    }
+    else{
+        setItem("aojani", addToCartZustand - price);
+    setMyCount(price);
+    setAddToCartZustand(addToCartZustand - price)
+    }
     
+  };
+const handlePressRemoveCart = (val) => {
+    handlePressRemovedCart(val?.productPrice)
+}
+
+const renderItem = ({item}) => {
+    return(
+        <Card item={item} cb={handlePressCallBack} cbRemoveCart = {handlePressRemoveCart}/>
+    )
+}
 
   return (
     <View style={styles.root}>
-    <Text>This is Ahmed{myCount}</Text>
+          <TouchableOpacity onPress={handlePressClear}>
+        <Text>Clear</Text>
+      </TouchableOpacity> 
+        <FlatList 
+        data={CARD_DUMMY_DATA}
+        renderItem={renderItem}
+        />
+    {/* <Text>This is Ahmed{myCount}</Text>
       <TouchableOpacity onPress={handlePressChange}>
         <Text>Change</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handlePressClear}>
         <Text>Clear</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   )
 }
@@ -56,7 +88,7 @@ export default Home
 const styles = StyleSheet.create({
     root: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
+        // alignItems: 'center',
+        // justifyContent: 'center'
       }
 })
